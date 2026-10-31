@@ -13,6 +13,29 @@ namespace AnimationToolkit.EditorTools
     /// </summary>
     public static class GifRecorder
     {
+        /// <summary>Các khung của lần Record gần nhất (path = null thì chỉ chụp khung, không ghi GIF). Dùng với SaveSheet để NHÌN từng khung.</summary>
+        public static List<Color32[]> LastFrames;
+
+        /// <summary>Ghép các khung (theo chỉ số) thành một bảng ảnh PNG, cols cột — để xem chuyển động từng khung một.</summary>
+        public static void SaveSheet(List<Color32[]> frames, int size, int[] indices, int cols, string pngPath)
+        {
+            int rows = (indices.Length + cols - 1) / cols;
+            Texture2D t = new Texture2D(size * cols, size * rows, TextureFormat.RGBA32, false);
+            Color32[] px = new Color32[size * cols * size * rows];
+            for (int n = 0; n < indices.Length; n++)
+            {
+                Color32[] f = frames[indices[n]];
+                int cx = n % cols, cy = rows - 1 - n / cols;
+                for (int y = 0; y < size; y++)
+                    for (int x = 0; x < size; x++)
+                        px[(cy * size + y) * (size * cols) + cx * size + x] = f[y * size + x];
+            }
+            t.SetPixels32(px);
+            Directory.CreateDirectory(Path.GetDirectoryName(pngPath));
+            File.WriteAllBytes(pngPath, t.EncodeToPNG());
+            Object.DestroyImmediate(t);
+        }
+
         /// <summary>Độ lệch trung bình (0..255 trên mỗi kênh) giữa hai khung.</summary>
         static double Diff(Color32[] a, Color32[] b)
         {
@@ -90,13 +113,25 @@ namespace AnimationToolkit.EditorTools
                     captured.Add(t.GetPixels32());
                     Object.DestroyImmediate(t);
                 }
-                Directory.CreateDirectory(Path.GetDirectoryName(path));
-                int bytes = GifWriter.Write(path, captured, size, size, delayCs);
+                LastFrames = captured;
+                int bytes = 0;
+                if (!string.IsNullOrEmpty(path))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                    bytes = GifWriter.Write(path, captured, size, size, delayCs);
+                }
                 // Kiểm tra vòng lặp khít: khung cuối → khung đầu không được "nhảy" hơn một bước thường
                 double step = 0; for (int f = 1; f < captured.Count; f++) step += Diff(captured[f - 1], captured[f]);
                 step /= (captured.Count - 1);
+                // Aliasing: animator nhanh nhất phải có ≥ 6 khung mỗi chu kỳ, nếu không GIF nhấp nháy như bánh xe quay ngược (dù game thật mượt)
+                float fastest = float.MaxValue;
+                for (int i = 0; i < group.Length; i++)
+                    if (group[i] != null && group[i].enabled && group[i].IsLooping && group[i].EffectiveCycle > 0.0001f) fastest = Mathf.Min(fastest, group[i].EffectiveCycle);
+                string alias = fastest < float.MaxValue
+                    ? "  | fastest cycle " + fastest.ToString("0.00") + "s = " + (fastest / dt).ToString("0.0") + " frames/cycle" + (fastest / dt < 6f ? "  WARNING: aliasing, lower delayCs (use 3 or 2)" : "")
+                    : "";
                 double seam = Diff(captured[captured.Count - 1], captured[0]);
-                info = Path.GetFileName(path) + ": " + frames + " frames, " + (loop).ToString("0.00") + "s loop, " + (bytes / 1024) + " KB | seam diff " + seam.ToString("F3") + " vs avg step " + step.ToString("F3") + (seam <= step * 1.5 + 0.02 ? "  (loops cleanly)" : "  (LOOP JUMP!)");
+                info = Path.GetFileName(path) + ": " + frames + " frames, " + (loop).ToString("0.00") + "s loop, " + (bytes / 1024) + " KB | seam diff " + seam.ToString("F3") + " vs avg step " + step.ToString("F3") + (seam <= step * 1.5 + 0.02 ? "  (loops cleanly)" : "  (LOOP JUMP!)") + alias;
             }
             finally
             {

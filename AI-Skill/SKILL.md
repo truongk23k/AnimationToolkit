@@ -19,7 +19,7 @@ You turn a plain-language motion description into working Unity animation using 
 3. **Check parts exist.** Each moving part needs its own Transform with the pivot at its joint. If not → *Flat art* rules; never fake it silently.
 4. **Map** each primitive to a component, `AnimKit.*`, or `PoseSequenceAnimator` keyframes; stack several on one object (layers add up). Put every animation in an **`AnimStateSet`** state on the root (template `templates/BuildAnimStates.cs.txt`): Inspector gets a Spine-style **Animation** dropdown, **Loop**, **Time Scale**; non-start animators disabled.
 5. **Tune** from `references/animation-principles.md` and the closest recipe in `references/recipes.md`. Desync siblings with `TimeOffset`.
-6. **Verify** (all of it): console 0 errors → tick animators in edit mode and measure ranges → for cut art run every gate in `references/splitting-flat-art.md` → look at Play-mode screenshots (two frames per state, zoomed on joints). Report numbers, not adjectives.
+6. **Verify** (all of it): console 0 errors → tick animators in edit mode and measure ranges → for cut art run every gate in `references/splitting-flat-art.md` → look at Play-mode screenshots (two frames per state, zoomed on joints) → **for any cyclic motion (flap, walk, chew, wag) look at a contact sheet of 8–9 consecutive frames** (`GifRecorder.Record(path:null)` + `SaveSheet`): check where each part attaches (a wing must grow from the shoulder, not the neck), draw order, and that tucked parts really disappear. Report numbers, not adjectives.
 7. **Report**: what was animated, parameters, loop/once per state (`IsLooping`, `EffectiveCycle`, `Describe()`), what was not cut and why, limits (resolution, Luna untested), how to adjust. The user can select the object: Scene view panel + Inspector header show loops; **Tools ▸ Animation Toolkit ▸ Animation Viewer** previews each state with timeline and curves.
 
 ### Definition of done
@@ -65,6 +65,7 @@ If a request mixes several (cat jump = Jump + tail chain + ear Swing + Breathing
 - `IOException 1224` when rewriting a PNG Unity just imported → `refresh_unity(scope=assets)` and retry.
 - Screenshots land in `Assets/Screenshots` → delete the folder when done. `manage_camera` only captures Game/Scene view (not Inspector/EditorWindows) — measure and describe those instead of claiming you saw them.
 - Don't leave `Camera.main` modified: use a private camera (`AnimGapCheck`/`RenderOnly` do) or restore it. Edit-mode previews must restore poses and `enabled`/`weight`/`speed` (the toolkit's runners do).
+- GIF demos of fast loops need ≥ 6 frames per cycle (`delayCs` 3 for a 4–5 Hz flap) or they strobe; a GIF that looks "wrong" while the game is fine is usually aliasing — check `GifRecorder`'s frames/cycle line before touching the animation.
 - Regenerating scenes (`NewScene`) while the user is in Play mode breaks their session — check `Application.isPlaying` first.
 - Changes made in Play mode are discarded on exit; edit-mode scene changes persist only after `SaveScene`.
 - Runtime code must stay Luna/WebGL-safe (no OnGUI, Input, LINQ in hot paths, reflection, Newtonsoft, coroutines, physics). **Not yet verified in a real Luna build** — say so.

@@ -147,9 +147,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 320012484}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.121869296, w: 0.9925462}
-  m_LocalPosition: {x: 0.3, y: 1.6, z: 0}
-  m_LocalScale: {x: 0.9999995, y: 1, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.12186944, w: 0.99254614}
+  m_LocalPosition: {x: 0.1, y: 1.52, z: 0}
+  m_LocalScale: {x: 0.99999917, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1867555312}
@@ -636,8 +636,8 @@ MonoBehaviour:
     ease: 3
   - time: 0.45
     position: {x: 0, y: 0, z: 0}
-    euler: {x: 0, y: 0, z: -78}
-    scale: {x: 1, y: 0.7, z: 1}
+    euler: {x: 0, y: 0, z: -92}
+    scale: {x: 1, y: 0.45, z: 1}
     ease: 8
   loopMode: 0
   delay: 0
@@ -752,8 +752,8 @@ MonoBehaviour:
     ease: 3
   - time: 0.4
     position: {x: 0, y: 0, z: 0}
-    euler: {x: 0, y: 0, z: -78}
-    scale: {x: 1, y: 0.7, z: 1}
+    euler: {x: 0, y: 0, z: -92}
+    scale: {x: 1, y: 0.45, z: 1}
     ease: 8
   loopMode: 0
   delay: 0
@@ -928,7 +928,7 @@ MonoBehaviour:
   unscaledTime: 0
   mode: 0
   eyeRenderers:
-  - {fileID: 1509884649}
+  - {fileID: 0}
   openSprite: {fileID: 21300000, guid: d71284a810e0bb143b4030a7a9e8dbaf, type: 3}
   halfSprite: {fileID: 0}
   closedSprite: {fileID: 21300000, guid: 392dcace7dcc8fa4a88e119688678a0a, type: 3}
@@ -1042,7 +1042,7 @@ Transform:
   m_GameObject: {fileID: 1560180475}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.06918517, w: 0.9976039}
-  m_LocalPosition: {x: 0.12, y: 1.52, z: 0}
+  m_LocalPosition: {x: -0.08, y: 1.44, z: 0}
   m_LocalScale: {x: 0.99999446, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1234,8 +1234,8 @@ MonoBehaviour:
   unscaledTime: 0
   chains:
   - segments:
-    - {fileID: 1682795502}
-    - {fileID: 2144494427}
+    - {fileID: 0}
+    - {fileID: 0}
     phase: 0
     amplitudeScale: 1
   amplitude: 9
@@ -1257,7 +1257,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1682795500}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.034899876, w: 0.99939084}
+  m_LocalRotation: {x: 0, y: 0, z: 0.034899898, w: 0.9993909}
   m_LocalPosition: {x: -0.7, y: 1.05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1336,8 +1336,8 @@ MonoBehaviour:
   unscaledTime: 0
   chains:
   - segments:
-    - {fileID: 1682795502}
-    - {fileID: 2144494427}
+    - {fileID: 0}
+    - {fileID: 0}
     phase: 0
     amplitudeScale: 1
   amplitude: 5
@@ -1385,6 +1385,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   states:
   - name: Idle
+    loop: 1
+    duration: 0
     animators:
     - {fileID: 2100801466}
     - {fileID: 860529313}
@@ -1393,6 +1395,8 @@ MonoBehaviour:
     - {fileID: 1509884650}
     - {fileID: 1682795504}
   - name: Fly
+    loop: 1
+    duration: 0
     animators:
     - {fileID: 1867555311}
     - {fileID: 1867555310}
@@ -1405,9 +1409,6 @@ MonoBehaviour:
   startState: Fly
   crossFade: 0.35
   timeScale: 1
-  autoCycle: 1
-  cycleSeconds: 4.5
-  debugControls: 1
 --- !u!114 &1867555309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1455,7 +1456,7 @@ MonoBehaviour:
   randomizeStart: 0
   unscaledTime: 0
   wings:
-  - wing: {fileID: 320012485}
+  - wing: {fileID: 0}
     side: 1
   body: {fileID: 0}
   flapsPerSecond: 4.5
@@ -1483,9 +1484,9 @@ MonoBehaviour:
   randomizeStart: 0
   unscaledTime: 0
   wings:
-  - wing: {fileID: 1560180478}
+  - wing: {fileID: 0}
     side: 1
-  body: {fileID: 1867555312}
+  body: {fileID: 0}
   flapsPerSecond: 4.5
   upAngle: -82
   downAngle: 36
@@ -1827,7 +1828,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2144494426}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.0261779, w: 0.99965733}
+  m_LocalRotation: {x: 0, y: 0, z: 0.02617789, w: 0.99965733}
   m_LocalPosition: {x: -0.82, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

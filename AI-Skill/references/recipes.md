@@ -46,6 +46,7 @@ Idle (perched, loops): Breathe(body, 0.03, 0.45) · head Keyframes loop 7 s (til
 Fly (hovers in place, loops): FlapAnimator near wing 4.5/s, SetAngles(−82, +36), body bob 0.16, Body = Bird ·
   FlapAnimator far wing SetAngles(−74, +30), TimeOffset 0.035 (depth) · MoveBy(bird, (0,0.45,0), 0.6 s) lift-off, held ·
   legs Keyframes Once (rotate −78°, scaleY 0.7 → tucked) · head SineWave ±0.04 @4.5 Hz · TailAnimator 9°/seg @2.25 Hz
+Rig rules that fixed a "wrong-looking" flap: the wing **shoulder sits on the back/upper body** (≈ −0.08, 1.44 for a body centred at x=0), NOT next to the neck — at the top of the stroke the wing then rises behind the head instead of sprouting out of it; tuck keys for legs rotate −92° and scale Y 0.45 so they fold fully behind the body (−78°/0.7 left dangling sticks).
 AnimStateSet on Bird: states Idle (loop), Fly (loop), non-start animators disabled, crossFade 0.35. Switch from code: `bird.GetComponent<AnimStateSet>().Play("Fly")`.
 ```
 Measured ✔: fly wing −74°…44° (rest 8°), bird y 0…0.5; idle head −16°…9°, body scaleY 1.00…1.03; after Play("Fly") all 6 Idle animators are off and 8 Fly animators on.

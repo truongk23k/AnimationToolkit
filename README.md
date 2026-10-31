@@ -62,7 +62,7 @@ API reference: [`AI-Skill/references/unity-animation-api.md`](AI-Skill/reference
 AnimationToolkit.EditorTools.GifRecorder.Record(GameObject.Find("Capy"), 0, 3.0f, 5, 320,
     new Vector2(0f, 1.12f), 1.3f, "Assets/AnimationToolkit/Documentation~/capy_eat.gif", 0.5f);
 ```
-Animators are snapped to the loop length so the GIF loops cleanly; random ones (blink) are muted while recording; everything is restored afterwards.
+Animators are snapped to the loop length so the GIF loops cleanly; random ones (blink) are muted while recording; everything is restored afterwards. The recorder warns when the fastest animator has fewer than 6 frames per cycle (it would strobe) — use a smaller frame delay (3 = 33 fps) for fast loops such as wing flaps. `GifRecorder.SaveSheet` tiles consecutive frames into one PNG for inspecting a motion frame by frame.
 
 ## Known limits
 

@@ -76,9 +76,9 @@ namespace AnimationToolkit.EditorTools
             Transform legR = Part("LegFront", bird, new Vector3(0.3f, 0.64f, 0), leg, 1);
             Transform tail1T = Part("Tail1", bird, new Vector3(-0.7f, 1.05f, 0), tail1, 2, 4f);
             Transform tail2T = Part("Tail2", tail1T, new Vector3(-0.82f, 0f, 0), tail2, 2, 3f);
-            Transform wingFar = Part("WingFar", bird, new Vector3(0.3f, 1.6f, 0), wing, 2, 14f, new Color(0.62f, 0.68f, 0.9f));
+            Transform wingFar = Part("WingFar", bird, new Vector3(0.10f, 1.52f, 0), wing, 2, 14f, new Color(0.62f, 0.68f, 0.9f));
             Transform bodyT = Part("Body", bird, new Vector3(0f, 0.5f, 0), body, 3);
-            Transform wingNear = Part("WingNear", bird, new Vector3(0.12f, 1.52f, 0), wing, 4, 8f);
+            Transform wingNear = Part("WingNear", bird, new Vector3(-0.08f, 1.44f, 0), wing, 4, 8f);
             Transform headT = Part("Head", bird, new Vector3(0.52f, 1.72f, 0), head, 6);
             Transform eyeT = Part("Eye", headT, new Vector3(0.3f, 0.58f, 0), eyeOpen, 7);
 
@@ -164,7 +164,7 @@ namespace AnimationToolkit.EditorTools
 
         static PoseKey TuckKey(float t)
         {
-            return new PoseKey { time = t, position = Vector3.zero, euler = new Vector3(0f, 0f, -78f), scale = new Vector3(1f, 0.7f, 1f), ease = EaseType.CubicOut };
+            return new PoseKey { time = t, position = Vector3.zero, euler = new Vector3(0f, 0f, -92f), scale = new Vector3(1f, 0.45f, 1f), ease = EaseType.CubicOut };
         }
 
         static void SetState(SerializedProperty p, string name, List<ToolkitAnimator> animators)
