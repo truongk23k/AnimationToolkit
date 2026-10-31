@@ -27,6 +27,7 @@ You turn a plain-language motion description into working Unity animation using 
 - [ ] Each requested animation is a named `AnimStateSet` state with the right Loop; start state set; non-start animators disabled.
 - [ ] Measured: ranges/periods match the intent (numbers in the report).
 - [ ] Cut art: mask overlay, layer sheet, rest-vs-peak crops, **`AnimGapCheck.Run` PASS incl. the ground/shadow layer**, **`AuditLayers` clean**, base-only view clean.
+- [ ] If the user wants to show it off: a demo GIF per state with `GifRecorder.Record` (check the seam message says `loops cleanly`), saved under `Documentation~/` and linked from the README.
 - [ ] Temporary files removed (`Assets/Screenshots`, scratch PNGs); camera/objects touched for measuring are restored.
 
 ## Primitive vocabulary — any motion is a mix of these
