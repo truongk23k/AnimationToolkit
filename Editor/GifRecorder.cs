@@ -13,6 +13,31 @@ namespace AnimationToolkit.EditorTools
     /// </summary>
     public static class GifRecorder
     {
+        static Dictionary<string, float> SnapshotFloats(Object o)
+        {
+            Dictionary<string, float> d = new Dictionary<string, float>();
+            SerializedObject so = new SerializedObject(o);
+            SerializedProperty p = so.GetIterator();
+            bool enter = true;
+            while (p.NextVisible(enter))
+            {
+                enter = false; // chỉ cấp cao nhất
+                if (p.propertyType == SerializedPropertyType.Float) d[p.propertyPath] = p.floatValue;
+            }
+            return d;
+        }
+
+        static void RestoreFloats(Object o, Dictionary<string, float> d)
+        {
+            SerializedObject so = new SerializedObject(o);
+            foreach (KeyValuePair<string, float> kv in d)
+            {
+                SerializedProperty p = so.FindProperty(kv.Key);
+                if (p != null && p.propertyType == SerializedPropertyType.Float) p.floatValue = kv.Value;
+            }
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
         /// <summary>Các khung của lần Record gần nhất (path = null thì chỉ chụp khung, không ghi GIF). Dùng với SaveSheet để NHÌN từng khung.</summary>
         public static List<Color32[]> LastFrames;
 
@@ -61,14 +86,16 @@ namespace AnimationToolkit.EditorTools
 
             // ── lưu trạng thái để khôi phục ──
             bool wasActive = root.activeSelf;
-            Dictionary<ToolkitAnimator, string> json = new Dictionary<ToolkitAnimator, string>();
+            // CHỈ lưu/khôi phục các trường float cấp cao nhất (SnapToLoop chỉ đổi tần số). KHÔNG dùng EditorJsonUtility.FromJsonOverwrite:
+            // nó làm mất tham chiếu tới Transform/SpriteRenderer trong scene (cánh chim, đốt đuôi...) và scene lưu ra bị hỏng.
+            Dictionary<ToolkitAnimator, Dictionary<string, float>> floats = new Dictionary<ToolkitAnimator, Dictionary<string, float>>();
             Dictionary<ToolkitAnimator, bool> en = new Dictionary<ToolkitAnimator, bool>();
             Dictionary<Transform, Vector3[]> pose = new Dictionary<Transform, Vector3[]>();
             Dictionary<Transform, Quaternion> rot = new Dictionary<Transform, Quaternion>();
             List<Transform> tmp = new List<Transform>();
             for (int i = 0; i < all.Length; i++)
             {
-                json[all[i]] = EditorJsonUtility.ToJson(all[i]);
+                floats[all[i]] = SnapshotFloats(all[i]);
                 en[all[i]] = all[i].enabled;
                 tmp.Clear(); all[i].GetAffectedTransforms(tmp);
                 for (int k = 0; k < tmp.Count; k++)
@@ -138,7 +165,7 @@ namespace AnimationToolkit.EditorTools
                 for (int i = 0; i < all.Length; i++) all[i].ClearOffset();
                 foreach (KeyValuePair<Transform, Vector3[]> kv in pose)
                     if (kv.Key != null) { kv.Key.localPosition = kv.Value[0]; kv.Key.localScale = kv.Value[1]; kv.Key.localRotation = rot[kv.Key]; }
-                foreach (KeyValuePair<ToolkitAnimator, string> kv in json) if (kv.Key != null) EditorJsonUtility.FromJsonOverwrite(kv.Value, kv.Key);
+                foreach (KeyValuePair<ToolkitAnimator, Dictionary<string, float>> kv in floats) if (kv.Key != null) RestoreFloats(kv.Key, kv.Value);
                 foreach (KeyValuePair<ToolkitAnimator, bool> kv in en) if (kv.Key != null) kv.Key.enabled = kv.Value;
                 foreach (KeyValuePair<ExpressionPulse, bool> kv in pulseEn) if (kv.Key != null) kv.Key.enabled = kv.Value;
                 if (set != null) set.ResetRuntime();

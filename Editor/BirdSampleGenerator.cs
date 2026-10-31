@@ -170,6 +170,8 @@ namespace AnimationToolkit.EditorTools
         static void SetState(SerializedProperty p, string name, List<ToolkitAnimator> animators)
         {
             p.FindPropertyRelative("name").stringValue = name;
+            // Cả Idle và Fly là vòng lặp: loop=false thì state đứng hình sau lượt đầu (Fly chỉ chạy 0.6s rồi đóng băng)
+            p.FindPropertyRelative("loop").boolValue = true;
             SerializedProperty arr = p.FindPropertyRelative("animators");
             arr.arraySize = animators.Count;
             for (int i = 0; i < animators.Count; i++) arr.GetArrayElementAtIndex(i).objectReferenceValue = animators[i];
