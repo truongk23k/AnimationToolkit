@@ -1,0 +1,17 @@
+// Template (Editor only — put under an Editor/ folder): bake the toolkit animators on the selected object to a looping clip.
+using AnimationToolkit.EditorTools;
+using UnityEditor;
+using UnityEngine;
+
+public static class ExampleBake
+{
+    [MenuItem("Tools/Animation Toolkit/Example Bake Selection")]
+    static void Run()
+    {
+        GameObject go = Selection.activeGameObject;
+        ClipBaker.Result r = ClipBaker.Bake(go, 4f, 30, true, true, true); // duration, fps, loop, legacy, snapToLoop
+        foreach (string note in r.notes) Debug.Log(note);                  // e.g. "Skipped (not bakeable): BlinkAnimator"
+        if (r.clip != null) AssetDatabase.CreateAsset(r.clip, "Assets/" + go.name + "_Anim.anim");
+        // Use the clip OR the live animators on the object, not both.
+    }
+}

@@ -1,0 +1,48 @@
+// Template (Editor only — put under an Editor/ folder): build named animations as AnimStateSet states.
+// Every animation = one state; non-start animators are disabled in the saved scene, AnimStateSet enables them at runtime.
+using System.Collections.Generic;
+using AnimationToolkit;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+
+public static class ExampleBuildStates
+{
+    public static void Build(Transform root, Transform body, Transform head)
+    {
+        // 1) animators per animation (any mix of primitives)
+        List<ToolkitAnimator> idle = new List<ToolkitAnimator>();
+        idle.Add(AnimKit.Breathe(body, 0.03f, 0.45f));
+        idle.Add(AnimKit.Swing(head, 4f, 0.25f));
+
+        List<ToolkitAnimator> excited = new List<ToolkitAnimator>();
+        excited.Add(AnimKit.Breathe(body, 0.05f, 0.9f));
+        excited.Add(AnimKit.Bounce(root, 0.15f, 0.25f, true));
+
+        // 2) the state set on the root
+        AnimStateSet set = root.gameObject.AddComponent<AnimStateSet>();
+        SerializedObject so = new SerializedObject(set);
+        SerializedProperty states = so.FindProperty("states");
+        states.arraySize = 2;
+        Fill(states.GetArrayElementAtIndex(0), "Idle", true, idle);       // name, loop, animators
+        Fill(states.GetArrayElementAtIndex(1), "Excited", true, excited);
+        so.FindProperty("startState").stringValue = "Idle";
+        so.ApplyModifiedProperties();
+
+        // 3) only the start state runs in the edit-mode scene
+        for (int i = 0; i < excited.Count; i++) excited[i].enabled = false;
+
+        EditorSceneManager.MarkAllScenesDirty();   // then EditorSceneManager.SaveScene(...)
+    }
+
+    static void Fill(SerializedProperty state, string name, bool loop, List<ToolkitAnimator> animators)
+    {
+        state.FindPropertyRelative("name").stringValue = name;
+        state.FindPropertyRelative("loop").boolValue = loop;                // false = play once, hold last pose, StateCompleted
+        SerializedProperty arr = state.FindPropertyRelative("animators");
+        arr.arraySize = animators.Count;
+        for (int i = 0; i < animators.Count; i++) arr.GetArrayElementAtIndex(i).objectReferenceValue = animators[i];
+    }
+
+    // Runtime: root.GetComponent<AnimStateSet>().Play("Excited");   // cross-fades; old animators fade out and disable themselves
+}

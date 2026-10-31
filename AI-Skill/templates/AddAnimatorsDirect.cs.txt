@@ -1,0 +1,31 @@
+// Template: animate ANY object directly with toolkit animators. Save as .cs to use.
+using AnimationToolkit;
+using UnityEngine;
+
+public class ExampleDirectAnimation : MonoBehaviour
+{
+    [SerializeField] Transform visual;      // child that holds the sprite (pivot at feet / joint)
+    [SerializeField] Transform[] tailChain; // optional: root -> tip, each a child of the previous
+
+    void Start()
+    {
+        // One-liners
+        AnimKit.Breathe(visual, 0.03f, 0.22f);
+        var bob = AnimKit.Hover(transform, 0.08f, 0.3f);
+        bob.TimeOffset = Random.value * 3f; // desync with other instances
+
+        // Chain only if separate segments exist
+        if (tailChain != null && tailChain.Length >= 2)
+        {
+            var tail = gameObject.AddComponent<TailAnimator>();
+            tail.Chains = new[] { new WaveChain { segments = tailChain } };
+            tail.Configure(8f, 0.7f, 0.12f); // degrees PER SEGMENT, Hz, phase delay
+        }
+
+        // Anything irregular: keyframes (offsets from rest pose)
+        AnimKit.Keyframes(visual, AnimLoopMode.Loop,
+            AnimKit.Key(0f, Vector3.zero),
+            AnimKit.Key(0.4f, new Vector3(0f, 0.1f, 0f), 6f, 1.04f, EaseType.CubicOut),
+            AnimKit.Key(1.2f, Vector3.zero));
+    }
+}
